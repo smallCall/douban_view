@@ -1,0 +1,442 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>豆瓣数据可视化</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+    <!-- 
+	Workforce CSS Template
+	https://templatemo.com/tm-461-workforce
+    -->
+
+
+	<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="static/css/animate.min.css">
+	<link rel="stylesheet" href="static/css/bootstrap.min.css">
+	<link rel="stylesheet" href="static/css/font-awesome.min.css">		
+	<link rel="stylesheet" href="static/css/templatemo-style.css">
+</head>
+<body data-spy="scroll" data-offset="50" data-target=".navbar-collapse">
+	<div class="preloader">
+		<div class="sk-spinner sk-spinner-rotating-plane"></div>
+	</div>
+	<nav class="navbar navbar-fixed-top custom-navbar" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="icon icon-bar"></span>
+					<span class="icon icon-bar"></span>
+					<span class="icon icon-bar"></span>
+				</button>
+				<a href="#" class="navbar-brand">豆瓣网</a>
+			</div>
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#home" class="smoothScroll">首页</a></li>
+					<li><a href="#about" class="smoothScroll">电影评分分布</a></li>
+					<li><a href="#portfolio" class="smoothScroll">电影排行榜</a></li>
+					<li><a href="#contact" class="smoothScroll">词云</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<!-- start home -->
+	<section id="home">
+		<div class="overlay">
+			<div class="flexslider">
+				<ul class="slides">
+					<li>
+						<img src="static/images/slider/1.jpg" alt="Slide 1">
+						<div class="slider-caption">
+							<div class="templatemo_homewrapper">
+								<h3 class="wow bounceIn"  >豆瓣电影排行榜</h3>
+								<h1 class="wow bounce" style="color:blue">TOP-250</h1>
+								<h2>
+									<span class="wow fadeIn" data-wow-delay="0.3s" style="color:white" >python</span>
+									<span class="wow fadeIn" data-wow-delay="0.6s" style="color:white" >爬虫</span>
+									<span class="wow fadeIn" data-wow-delay="0.9s" style="color:white" >数据可视化</span>
+								</h2>
+
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</section>
+	<!-- end home -->
+
+	<!-- start service -->
+	<!-- end service -->
+
+	<!-- start about -->
+	<section id="about">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 wow bounceIn">
+					<h2>豆瓣评分</h2>
+					<hr>
+					<h4>各个评分比例</h4>
+				</div>
+			</div>
+								<!-- 引入 ECharts 文件 -->
+						<script src="static/js/echarts.common.js"></script>
+					    <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+					    <div id="bar2" style="width: 100%;height:400px;"></div>
+						<script type="text/javascript">
+						// 基于准备好的dom，初始化echarts实例
+						var myChart = echarts.init(document.getElementById('bar2'));
+						// 指定图表的配置项和数据
+						option = {
+								tooltip: {
+									trigger: 'axis',
+									axisPointer: {
+										type: 'cross',
+										crossStyle: {
+											color: '#000'
+										}
+									}
+								},
+								toolbox: {
+									feature: {
+										dataView: {show: true, readOnly: false},
+										magicType: {show: true, type: ['line', 'bar']},
+										restore: {show: true},
+										saveAsImage: {show: true}
+									}
+								},
+								legend: {
+									data: ['电影部数', '电影评分人数']
+								},
+								xAxis: [
+									{
+										type: 'category',
+										data: {{ score_list | tojson }},
+										axisPointer: {
+											type: 'shadow'
+										}
+									}
+								],
+								yAxis: [
+									{
+											type: 'value',
+											name: '电影部数',
+											min: 0,
+											max: 50,
+											interval: 10,
+											axisLabel: {
+												formatter: '{value} 部'
+											}
+										}
+								],
+								series: [
+									{
+										name: '电影部数',
+										type: 'bar',
+										data: {{ count_list | tojson }}
+									}
+								]
+							};
+
+						// 使用刚指定的配置项和数据显示图表。
+						myChart.setOption(option);
+					</script>
+
+					    <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+					    <div id="bar" style="width: 100%;height:500px;"></div>
+						<script type="text/javascript">
+						// 基于准备好的dom，初始化echarts实例
+						var myChart = echarts.init(document.getElementById('bar'));
+						option = {
+
+							title: {
+								text: '评分占比',
+								left: 'center',
+							    bottom: '0px',
+								textStyle: {
+									color: '#000'
+								}
+							},
+								toolbox: {
+									feature: {
+										dataView: {show: true, readOnly: false},
+										restore: {show: true},
+										saveAsImage: {show: true}
+									}
+								},
+							tooltip: {
+								trigger: 'item',
+								formatter: '{b}<br/>{c}部({d}%)'
+							},
+
+							visualMap: {
+								show: false,
+								min: 150,
+								max: 10000,
+								inRange: {
+									colorLightness: [0, 1]
+								}
+							},
+							series: [
+								{
+									name:'评分分布',
+									type: 'pie',
+									radius: '85%',
+									center: ['50%', '50%'],
+									data: [
+										{% for k,v in k_v_data.items()%}
+											{value: {{v}}, name: {{k}}+'分' },
+										{% endfor %}
+									].sort(function (a, b) { return a.value - b.value; }),
+									roseType: 'radius',
+									label: {
+										color: '#000'
+									},
+									labelLine: {
+										lineStyle: {
+											color: '#000'
+										},
+										smooth: 0.2,
+										length: 3,
+										length2: 9
+									},
+									itemStyle: {
+										color: '#c23531',
+										shadowBlur: 200,
+										shadowColor: 'rgba(0, 0, 0, 0.5)'
+									},
+
+									animationType: 'scale',
+									animationEasing: 'elasticOut',
+									animationDelay: function (idx) {
+										return Math.random() * 200;
+									}
+								}
+							]
+						};
+						// 使用刚指定的配置项和数据显示图表。
+						myChart.setOption(option);
+					</script>
+
+		</div>
+	</section>
+	<!-- end about -->
+
+	<!-- start divider -->
+	<div class="divider">
+		<div class="overlay">
+			<div class="container">
+				<div class="row">
+					<div class="divider-des">
+						<h3 class="text-uppercase">电影排行榜</h3>
+						<p>豆瓣top250</p>
+						<table class="table">
+							  <thead>
+								<tr>
+								  <th class="text-center">排名</th>
+								  <th class="text-center">电影</th>
+								  <th class="text-center">描述</th>
+								  <th class="text-center">分均分数</th>
+								  <th class="text-center">评价人数</th>
+								</tr>
+							  </thead>
+							  <tbody>
+							  {% for i in info_list %}
+								<tr>
+								  <td>{{ i[0] }}</td>
+								  <td>{{ i[1] }}</td>
+								  <td>{{ i[2] }}</td>
+								  <td>{{ i[3] }}</td>
+								  <td>{{ i[4] }}</td>
+								</tr>
+							  {% endfor %}
+							  </tbody>
+							</table>
+					<img src="static/images/apple.jpg" width="50%" height="50%">
+					</div>
+
+				</div>
+
+
+
+			</div>
+		</div>
+	</div>
+	<!-- end divider -->
+
+
+	<!-- start portfolio -->
+	<section id="portfolio">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="wow bounceIn">
+						<h2 class="wow bounceIn">Portfolio</h2>
+						<hr>
+						<h4>our lastest projects in the past 6 months</h4>
+					</div>
+					<div class="iso-section wow fadeIn" data-wow-delay="0.6s">
+
+						<ul class="filter-wrapper clearfix">
+							<li><a href="#" data-filter="*" class="selected opc-main-bg">All</a></li>
+							<li><a href="#" class="opc-main-bg" data-filter=".graphic">Graphic</a></li>
+							<li><a href="#" class="opc-main-bg" data-filter=".photoshop">Photoshop</a></li>
+							<li><a href="#" class="opc-main-bg" data-filter=".wallpaper">Wallpaper</a></li>
+						</ul>
+
+						<div class="iso-box-section">
+							<div class="iso-box-wrapper col4-iso-box">
+
+								<div class="iso-box graphic photoshop wallpaper col-md-4 col-sm-6 col-xs-12">
+									<div class="portfolio-thumb">
+										<img src="static/images/portfolio-img-1.jpg" class="fluid-img" alt="portfolio img">
+										<div class="portfolio-overlay">
+											<div class="portfolio-description">
+												<a href="#" class="fa fa-search">1.jpg</a>
+												<a href="#" class="fa fa-link">1.jpg</a>
+												<h4>Project title</h4>
+												<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonumm.</p>	
+											</div>											
+										</div>
+									</div>
+								</div>
+								<div class="iso-box graphic wallpaper col-md-4 col-sm-6 col-xs-12">
+									<div class="portfolio-thumb">
+										<img src="static/images/portfolio-img-2.jpg" class="fluid-img" alt="portfolio img">
+										<div class="portfolio-overlay">
+											<div class="portfolio-description">
+												<a href="#" class="fa fa-search"></a>
+												<a href="#" class="fa fa-link"></a>
+												<h4>Project title</h4>
+												<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonumm.</p>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="iso-box wallpaper col-md-4 col-sm-6 col-xs-12">
+									<div class="portfolio-thumb">
+										<img src="static/images/portfolio-img-3.jpg" class="fluid-img" alt="portfolio img">
+										<div class="portfolio-overlay">
+											<div class="portfolio-description">
+												<a href="#" class="fa fa-search"></a>
+												<a href="#" class="fa fa-link"></a>
+												<h4>Project title</h4>
+												<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonumm.</p>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="iso-box graphic col-md-4 col-sm-6 col-xs-12">
+									<div class="portfolio-thumb">
+										<img src="static/images/portfolio-img-4.jpg" class="fluid-img" alt="portfolio img">
+										<div class="portfolio-overlay">
+											<div class="portfolio-description">
+												<a href="#" class="fa fa-search"></a>
+												<a href="#" class="fa fa-link"></a>
+												<h4>Project title</h4>
+												<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonumm.</p>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="iso-box wallpaper col-md-4 col-sm-6 col-xs-12">
+									<div class="portfolio-thumb">
+										<img src="static/images/portfolio-img-5.jpg" class="fluid-img" alt="portfolio img">
+										<div class="portfolio-overlay">
+											<div class="portfolio-description">
+												<a href="#" class="fa fa-search"></a>
+												<a href="#" class="fa fa-link"></a>
+												<h4>Project title</h4>
+												<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonumm.</p>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="iso-box graphic photoshop col-md-4 col-sm-6 col-xs-12">
+									<div class="portfolio-thumb">
+										<img src="static/images/portfolio-img-6.jpg" class="fluid-img" alt="portfolio img">
+										<div class="portfolio-overlay">
+											<div class="portfolio-description">
+												<a href="#" class="fa fa-search"></a>
+												<a href="#" class="fa fa-link"></a>
+												<h4>Project title</h4>
+												<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonumm.</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- end portfolio -->
+
+
+
+
+
+	<footer>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<ul class="social-icon wow fadeIn" data-wow-delay="0.3s">
+						<li><a href="#" class="fa fa-facebook"></a></li>
+						<li><a href="#" class="fa fa-twitter"></a></li>
+						<li><a href="#" class="fa fa-instagram"></a></li>
+					</ul>
+					<p class="wow bounceIn">More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></p>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<!-- 引用看板娘交互所需的样式表 -->
+	<link href='static/css/pio.css' rel='stylesheet' type='text/css'/>
+	<!-- 引用 Live2D 核心组件 -->
+	<script src='static/js/l2d.js'></script>
+	<!-- 引用看板娘交互组件 -->
+	<script src='static/js/pio.js'></script>
+
+<div class="pio-container left">
+		<div class="pio-action"></div>
+		<canvas id="pio" width="150" height="250"></canvas>
+	</div>
+<!--fixed	draggable 可以拖动的模式-->
+	<script type="text/javascript">
+		var pio = new Paul_Pio({
+			 "mode": "draggable",
+			"hidden": true,
+			"content": {
+				"welcome": ["欢迎来到保罗的小宇宙！", "今天天气不错，一起来玩吧！", "博主每天都有些折腾记录，欢迎前往他的小窝阅读~"],
+				"custom": [
+					{"selector": ".comment-form", "text": "欢迎参与本文评论，别发小广告噢~"},
+					{"selector": ".home-social a:last-child", "text": "在这里可以了解博主的日常噢~"},
+					{"selector": ".post-item a", "type": "read"},
+					{"selector": ".post-content a, .page-content a", "type": "link"}
+				]
+			},
+			"night": "single.night()",
+			"model": ["static/model.json"],
+			"tips": true
+		});
+	</script>
+	<script src="static/js/jquery.js"></script>
+	<script src="static/js/bootstrap.min.js"></script>
+	<script src="static/js/jquery.flexslider.js"></script>
+	<script src="static/js/isotope.js"></script>
+	<script src="static/js/imagesloaded.min.js"></script>
+	<script src="static/js/smoothscroll.js"></script>
+	<script src="static/js/wow.min.js"></script>
+	<script src="static/js/custom.js"></script>
+	<script src="static/js/cursor-effects.js"></script>
+
+
+</body>
+</html>
